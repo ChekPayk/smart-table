@@ -25,34 +25,34 @@ const sampleTable = initTable({
 }, render);
 
 // --- Шаг 5: поиск ---
-const applySearching = initSearching('search');
+// const applySearching = initSearching('search');
 
 // --- Шаг 4: фильтрация ---
-const applyFiltering = initFiltering(sampleTable.filter.elements, {
-    searchBySeller: indexes.sellers,
-});
+// const applyFiltering = initFiltering(sampleTable.filter.elements, {
+//     searchBySeller: indexes.sellers,
+// });
 
 
 // --- Шаг 3: сортировка ---
-const applySorting = initSorting([
-    sampleTable.header.elements.sortByDate,
-    sampleTable.header.elements.sortByTotal
-]);
+// const applySorting = initSorting([
+//     sampleTable.header.elements.sortByDate,
+//     sampleTable.header.elements.sortByTotal
+// ]);
 
 // --- Шаг 2: пагинация ---
-const applyPagination = initPagination(
-    sampleTable.pagination.elements,
-    (el, page, isCurrent) => {
-        const input = el.querySelector("input");
-        const span = el.querySelector("span");
+// const applyPagination = initPagination(
+//     sampleTable.pagination.elements,
+//     (el, page, isCurrent) => {
+//         const input = el.querySelector("input");
+//         const span = el.querySelector("span");
 
-        input.value = page;
-        input.checked = isCurrent;
-        span.textContent = page;
+//         input.value = page;
+//         input.checked = isCurrent;
+//         span.textContent = page;
 
-        return el;
-    }
-);
+//         return el;
+//     }
+// );
 
 // --- Сбор состояния формы ---
 function collectState() {
@@ -73,17 +73,17 @@ function collectState() {
 function processData(dataSet, state, action) {
     let result = [...dataSet];
 
-    // Поиск
-    result = applySearching(result, state, action);
+    // // Поиск
+    // result = applySearching(result, state, action);
 
-    // Фильтрация
-    result = applyFiltering(result, state, action);
+    // // Фильтрация
+    // result = applyFiltering(result, state, action);
 
-    // Сортировка
-    result = applySorting(result, state, action);
+    // // Сортировка
+    // result = applySorting(result, state, action);
 
-    // Пагинация
-    result = applyPagination(result, state, action);
+    // // Пагинация
+    // result = applyPagination(result, state, action);
 
     return result;
 }
