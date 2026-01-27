@@ -11,7 +11,7 @@ import { initTable } from "./components/table.js";
 import { initPagination } from "./components/pagination.js";
 import { initSorting } from "./components/sorting.js";
 import { initFiltering } from "./components/filtering.js";
-import { initSearching, rules, createComparison } from "./components/searching.js";
+import { initSearching } from "./components/searching.js";
 
 // --- Шаг 0: подготовка данных ---
 const { data, ...indexes } = initData(sourceData);
@@ -32,17 +32,6 @@ const applyFiltering = initFiltering(sampleTable.filter.elements, {
     searchBySeller: indexes.sellers,
 });
 
-// Заполняем select фильтров
-Object.keys(indexes).forEach((elementName) => {
-    sampleTable.filter.elements[elementName].append(
-        ...Object.values(indexes[elementName]).map(name => {
-            const option = document.createElement('option');
-            option.value = name;
-            option.textContent = name;
-            return option;
-        })
-    );
-});
 
 // --- Шаг 3: сортировка ---
 const applySorting = initSorting([
