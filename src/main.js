@@ -56,6 +56,19 @@ const sampleTable = initTable(
 //         return el;
 //     }
 // );
+const { applyPagination, updatePagination } = initPagination(
+  sampleTable.pagination.elements,
+  (el, page, isCurrent) => {
+    const input = el.querySelector("input");
+    const span = el.querySelector("span");
+
+    input.value = page;
+    input.checked = isCurrent;
+    span.textContent = page;
+
+    return el;
+  },
+);
 
 // --- Сбор состояния формы ---
 function collectState() {
@@ -96,7 +109,10 @@ async function render(action) {
   const state = collectState();
   // const result = processData(data, state, action);
   let query = {};
+  query = applyPagination(query, state, action); // обновляем query
   const { total, items } = await API.getRecords(query);
+
+  updatePagination(total, query); // перерисовываем пагинатор
   sampleTable.render(items);
 }
 
