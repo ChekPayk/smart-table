@@ -1,7 +1,7 @@
 // src/main.js
 
-import './fonts/ys-display/fonts.css';
-import './style.css';
+import "./fonts/ys-display/fonts.css";
+import "./style.css";
 
 import { data as sourceData } from "./data/dataset_1.js";
 import { initData } from "./data.js";
@@ -14,15 +14,19 @@ import { initFiltering } from "./components/filtering.js";
 import { initSearching } from "./components/searching.js";
 
 // --- Шаг 0: подготовка данных ---
-const { data, ...indexes } = initData(sourceData);
+// const { data, ...indexes } = initData(sourceData);
+const API = initData(sourceData);
 
 // --- Инициализация таблицы ---
-const sampleTable = initTable({
-    tableTemplate: 'table',
-    rowTemplate: 'row',
-    before: ['search', 'header', 'filter'],  // поиск, заголовок и фильтры
-    after: ['pagination']
-}, render);
+const sampleTable = initTable(
+  {
+    tableTemplate: "table",
+    rowTemplate: "row",
+    before: ["search", "header", "filter"], // поиск, заголовок и фильтры
+    after: ["pagination"],
+  },
+  render,
+);
 
 // --- Шаг 5: поиск ---
 // const applySearching = initSearching('search');
@@ -31,7 +35,6 @@ const sampleTable = initTable({
 // const applyFiltering = initFiltering(sampleTable.filter.elements, {
 //     searchBySeller: indexes.sellers,
 // });
-
 
 // --- Шаг 3: сортировка ---
 // const applySorting = initSorting([
@@ -56,56 +59,64 @@ const sampleTable = initTable({
 
 // --- Сбор состояния формы ---
 function collectState() {
-    const state = processFormData(new FormData(sampleTable.container));
+  const state = processFormData(new FormData(sampleTable.container));
 
-    // Приведение типов
-    const rowsPerPage = parseInt(state.rowsPerPage);
-    const page = parseInt(state.page ?? 1);
+  // Приведение типов
+  const rowsPerPage = parseInt(state.rowsPerPage);
+  const page = parseInt(state.page ?? 1);
 
-    return {
-        ...state,
-        rowsPerPage,
-        page
-    };
+  return {
+    ...state,
+    rowsPerPage,
+    page,
+  };
 }
 
 // --- Основная функция обработки данных ---
 function processData(dataSet, state, action) {
-    let result = [...dataSet];
+  let result = [...dataSet];
 
-    // // Поиск
-    // result = applySearching(result, state, action);
+  // // Поиск
+  // result = applySearching(result, state, action);
 
-    // // Фильтрация
-    // result = applyFiltering(result, state, action);
+  // // Фильтрация
+  // result = applyFiltering(result, state, action);
 
-    // // Сортировка
-    // result = applySorting(result, state, action);
+  // // Сортировка
+  // result = applySorting(result, state, action);
 
-    // // Пагинация
-    // result = applyPagination(result, state, action);
+  // // Пагинация
+  // result = applyPagination(result, state, action);
 
-    return result;
+  return result;
 }
 
 // --- Рендер таблицы ---
-function render(action) {
-    const state = collectState();
-    const result = processData(data, state, action);
-    sampleTable.render(result);
+async function render(action) {
+  const state = collectState();
+  // const result = processData(data, state, action);
+  let query = {};
+  const { total, items } = await API.getRecords(query);
+  sampleTable.render(items);
 }
 
 // --- Обработчики событий ---
-sampleTable.container.addEventListener('change', () => render());
-sampleTable.container.addEventListener('reset', () => setTimeout(() => render()));
-sampleTable.container.addEventListener('submit', (e) => {
-    e.preventDefault();
-    render(e.submitter);
+sampleTable.container.addEventListener("change", () => render());
+sampleTable.container.addEventListener("reset", () =>
+  setTimeout(() => render()),
+);
+sampleTable.container.addEventListener("submit", (e) => {
+  e.preventDefault();
+  render(e.submitter);
 });
 
 // --- Подключаем таблицу к DOM ---
-const appRoot = document.querySelector('#app');
+const appRoot = document.querySelector("#app");
 appRoot.appendChild(sampleTable.container);
 
+async function init() {
+  const indexes = await API.getIndexes();
+}
+
 // --- Первичный рендер ---
-render();
+init().then(render);
