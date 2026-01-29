@@ -113,7 +113,7 @@ async function render(action) {
   query = applyFiltering(query, state, action); // result заменяем на query
 
   query = applySearching(query, state, action);
-  query = applySorting(query, state, action);
+//   query = applySorting(query, state, action);
 
   const { total, items } = await API.getRecords(query);
 
