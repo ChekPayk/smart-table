@@ -12,7 +12,6 @@ import { initPagination } from "./components/pagination.js";
 import { initSorting } from "./components/sorting.js";
 import { initFiltering } from "./components/filtering.js";
 import { initSearching } from "./components/searching.js";
-// import { updateIndexes } from "./components/filtering.js";
 
 // --- Шаг 0: подготовка данных ---
 // const { data, ...indexes } = initData(sourceData);
@@ -113,7 +112,7 @@ async function render(action) {
   query = applyFiltering(query, state, action); // result заменяем на query
 
   query = applySearching(query, state, action);
-//   query = applySorting(query, state, action);
+  query = applySorting(query, state, action);
 
   const { total, items } = await API.getRecords(query);
 
