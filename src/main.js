@@ -1,5 +1,3 @@
-// src/main.js
-
 import "./fonts/ys-display/fonts.css";
 import "./style.css";
 
@@ -14,7 +12,6 @@ import { initFiltering } from "./components/filtering.js";
 import { initSearching } from "./components/searching.js";
 
 // --- Шаг 0: подготовка данных ---
-// const { data, ...indexes } = initData(sourceData);
 const API = initData(sourceData);
 
 // --- Инициализация таблицы ---
@@ -22,7 +19,7 @@ const sampleTable = initTable(
   {
     tableTemplate: "table",
     rowTemplate: "row",
-    before: ["search", "header", "filter"], // поиск, заголовок и фильтры
+    before: ["search", "header", "filter"],
     after: ["pagination"],
   },
   render,
@@ -42,20 +39,6 @@ const applySorting = initSorting([
   sampleTable.header.elements.sortByTotal,
 ]);
 
-// --- Шаг 2: пагинация ---
-// const applyPagination = initPagination(
-//     sampleTable.pagination.elements,
-//     (el, page, isCurrent) => {
-//         const input = el.querySelector("input");
-//         const span = el.querySelector("span");
-
-//         input.value = page;
-//         input.checked = isCurrent;
-//         span.textContent = page;
-
-//         return el;
-//     }
-// );
 const { applyPagination, updatePagination } = initPagination(
   sampleTable.pagination.elements,
   (el, page, isCurrent) => {
@@ -84,25 +67,6 @@ function collectState() {
     page,
   };
 }
-
-// --- Основная функция обработки данных ---
-// function processData(dataSet, state, action) {
-//   let result = [...dataSet];
-
-//   // Поиск
-//   result = applySearching(result, state, action);
-
-//   // Фильтрация
-//   result = applyFiltering(result, state, action);
-
-//   // Сортировка
-//   result = applySorting(result, state, action);
-
-//   // Пагинация
-//   result = applyPagination(result, state, action);
-
-//   return result;
-// }
 
 // --- Рендер таблицы ---
 async function render(action) {
