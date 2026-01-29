@@ -1,27 +1,26 @@
-import { createComparison, defaultRules } from "../lib/compare.js";
-
-// Настроим компаратор один раз
-const compare = createComparison(defaultRules);
-
-export function initFiltering(elements, indexes) {
+export function initFiltering(elements) {
   // --------------------------------------------------
   // #4.1 — заполнить выпадающие списки опциями
   // --------------------------------------------------
-Object.keys(indexes).forEach((elementName) => {
-        const select = elements[elementName];
+  const updateIndexes = (indexes) => {
+    Object.keys(indexes).forEach((elementName) => {
+      const select = elements[elementName];
 
-        select.append(
-            ...Object.values(indexes[elementName]).map(name => {
-                const option = document.createElement('option');
-                option.value = name;
-                option.textContent = name;
-                return option;
-            })
-        );
+      select.append(
+        ...Object.values(indexes[elementName]).map((name) => {
+          const el = document.createElement("option");
+          el.textContent = name;
+          el.value = name;
+          return el;
+        }),
+      );
     });
+  };
 
-
-  return (data, state, action) => {
+  // --------------------------------------------------
+  // #4.2 и #4.5 — обработка фильтрации
+  // --------------------------------------------------
+  const applyFiltering = (query, state, action) => {
     // --------------------------------------------------
     // #4.2 — обработать очистку поля (кнопка clear)
     // --------------------------------------------------
@@ -41,8 +40,29 @@ Object.keys(indexes).forEach((elementName) => {
     }
 
     // --------------------------------------------------
-    // #4.5 — фильтруем данные, используя компаратор
+    // #4.5 — формируем фильтр для запроса к API
     // --------------------------------------------------
-    return data.filter((row) => compare(row, state));
+    const filter = {};
+    Object.keys(elements).forEach((key) => {
+      if (elements[key]) {
+        if (
+          ["INPUT", "SELECT"].includes(elements[key].tagName) &&
+          elements[key].value
+        ) {
+          // ищем поля ввода в фильтре с непустыми данными
+          filter[`filter[${elements[key].name}]`] = elements[key].value;
+        }
+      }
+    });
+
+    // если в фильтре что-то добавилось, применим к запросу
+    return Object.keys(filter).length
+      ? Object.assign({}, query, filter)
+      : query;
+  };
+
+  return {
+    updateIndexes,
+    applyFiltering,
   };
 }

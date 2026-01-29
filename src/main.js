@@ -12,6 +12,7 @@ import { initPagination } from "./components/pagination.js";
 import { initSorting } from "./components/sorting.js";
 import { initFiltering } from "./components/filtering.js";
 import { initSearching } from "./components/searching.js";
+// import { updateIndexes } from "./components/filtering.js";
 
 // --- Шаг 0: подготовка данных ---
 // const { data, ...indexes } = initData(sourceData);
@@ -29,18 +30,18 @@ const sampleTable = initTable(
 );
 
 // --- Шаг 5: поиск ---
-// const applySearching = initSearching('search');
+const applySearching = initSearching("search");
 
 // --- Шаг 4: фильтрация ---
-// const applyFiltering = initFiltering(sampleTable.filter.elements, {
-//     searchBySeller: indexes.sellers,
-// });
+const { applyFiltering, updateIndexes } = initFiltering(
+  sampleTable.filter.elements,
+);
 
 // --- Шаг 3: сортировка ---
-// const applySorting = initSorting([
-//     sampleTable.header.elements.sortByDate,
-//     sampleTable.header.elements.sortByTotal
-// ]);
+const applySorting = initSorting([
+  sampleTable.header.elements.sortByDate,
+  sampleTable.header.elements.sortByTotal,
+]);
 
 // --- Шаг 2: пагинация ---
 // const applyPagination = initPagination(
@@ -86,30 +87,34 @@ function collectState() {
 }
 
 // --- Основная функция обработки данных ---
-function processData(dataSet, state, action) {
-  let result = [...dataSet];
+// function processData(dataSet, state, action) {
+//   let result = [...dataSet];
 
-  // // Поиск
-  // result = applySearching(result, state, action);
+//   // Поиск
+//   result = applySearching(result, state, action);
 
-  // // Фильтрация
-  // result = applyFiltering(result, state, action);
+//   // Фильтрация
+//   result = applyFiltering(result, state, action);
 
-  // // Сортировка
-  // result = applySorting(result, state, action);
+//   // Сортировка
+//   result = applySorting(result, state, action);
 
-  // // Пагинация
-  // result = applyPagination(result, state, action);
+//   // Пагинация
+//   result = applyPagination(result, state, action);
 
-  return result;
-}
+//   return result;
+// }
 
 // --- Рендер таблицы ---
 async function render(action) {
-  const state = collectState();
-  // const result = processData(data, state, action);
+  let state = collectState();
   let query = {};
   query = applyPagination(query, state, action); // обновляем query
+  query = applyFiltering(query, state, action); // result заменяем на query
+
+  query = applySearching(query, state, action);
+  query = applySorting(query, state, action);
+
   const { total, items } = await API.getRecords(query);
 
   updatePagination(total, query); // перерисовываем пагинатор
@@ -132,6 +137,10 @@ appRoot.appendChild(sampleTable.container);
 
 async function init() {
   const indexes = await API.getIndexes();
+
+  updateIndexes(sampleTable.filter.elements, {
+    searchBySeller: indexes.sellers,
+  });
 }
 
 // --- Первичный рендер ---

@@ -41,7 +41,6 @@ export const initPagination = (
     return Object.assign({}, query, {
       limit,
       page,
-      offset: (page - 1) * limit, // добавляем offset для серверной пагинации
     });
   };
 
