@@ -2,7 +2,7 @@ export function initFiltering(elements) {
   // --------------------------------------------------
   // #4.1 — заполнить выпадающие списки опциями
   // --------------------------------------------------
-  const updateIndexes = (indexes) => {
+  const updateIndexes = (elements, indexes) => {
     Object.keys(indexes).forEach((elementName) => {
       const select = elements[elementName];
 
